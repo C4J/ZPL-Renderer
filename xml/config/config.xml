@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<config>
+    <settings>
+        <inputFolder>./examples</inputFolder>
+        <labelOrder>Add First</labelOrder>
+        <portNo>9100</portNo>
+        <magnification>0.5</magnification>
+    </settings>
+</config>

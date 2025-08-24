@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fonts>
+    <font filename="ATTriumvirate-CondensedBold.ttf" height="15" id="0" name="Triumvirate Cond Bold" renderer="SCALEABLE" spacing="PROPORTIONAL" width="12"/>
+    <font filename="AnonymousPro-Regular.ttf" height="9" id="A" name="Anonymous Pro Regular" renderer="SCALEABLE" spacing="PROPORTIONAL" width="5"/>
+    <font filename="ATTriumvirate-CondensedBold.ttf" height="11" id="B" name="Triumvirate Cond Bold" renderer="SCALEABLE" spacing="PROPORTIONAL" width="7"/>
+    <font filename="AnonymousPro-Regular.ttf" height="18" id="C" name="Anonymous Pro Regular" renderer="SCALEABLE" spacing="PROPORTIONAL" width="10"/>
+    <font filename="AnonymousPro-Regular.ttf" height="18" id="D" name="Anonymous Pro Regular" renderer="SCALEABLE" spacing="PROPORTIONAL" width="10"/>
+    <font filename="AnonymousPro-Regular.ttf" height="28" id="E" name="Anonymous Pro Regular" renderer="SCALEABLE" spacing="PROPORTIONAL" width="15"/>
+    <font filename="AnonymousPro-Regular.ttf" height="26" id="F" name="Anonymous Pro Regular" renderer="SCALEABLE" spacing="PROPORTIONAL" width="13"/>
+    <font filename="" height="60" id="G" name="Monospaced" renderer="SCALEABLE" spacing="PROPORTIONAL" width="40"/>
+    <font filename="AnonymousPro-BoldItalic.ttf" height="21" id="H" name="Anonymous Pro Bold Italic" renderer="SCALEABLE" spacing="PROPORTIONAL" width="13"/>
+    <font filename="AnonymousPro-Italic.ttf" height="20" id="P" name="Anonymous Pro Italic" renderer="SCALEABLE" spacing="PROPORTIONAL" width="18"/>
+    <font filename="AnonymousPro-Regular.ttf" height="28" id="Q" name="Anonymous Pro Regular" renderer="SCALEABLE" spacing="PROPORTIONAL" width="24"/>
+    <font filename="" height="35" id="R" name="Dialog" renderer="SCALEABLE" spacing="PROPORTIONAL" width="31"/>
+    <font filename="" height="40" id="S" name="Dialog" renderer="SCALEABLE" spacing="PROPORTIONAL" width="35"/>
+    <font filename="" height="48" id="T" name="Dialog" renderer="SCALEABLE" spacing="PROPORTIONAL" width="42"/>
+    <font filename="" height="59" id="U" name="Dialog" renderer="SCALEABLE" spacing="PROPORTIONAL" width="53"/>
+    <font filename="" height="80" id="V" name="Dialog" renderer="SCALEABLE" spacing="PROPORTIONAL" width="71"/>
+</fonts>

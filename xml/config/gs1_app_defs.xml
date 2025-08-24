@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gs1>
+	<ean app_id="00" description="SSCC-18" max_length="18" fixed_variable="F"></ean>
+	<ean app_id="01" description="SCC-14" max_length="14" fixed_variable="F"></ean>
+	<ean app_id="02" description="Item Number of Goods Contained Within Another Unit (Must Use with AI 37)" max_length="14" fixed_variable="F"></ean>
+	<ean app_id="10" description="Batch or Lot Number" max_length="20" fixed_variable="V"></ean>
+	<ean app_id="11" description="Production Date (YYMMDD)" max_length="6" fixed_variable="F"></ean>
+	<ean app_id="13" description="Packaging Date (YYMMDD)" max_length="6" fixed_variable="F"></ean>
+	<ean app_id="15" description="Sell By Date (Quality) (YYMMDD)" max_length="6" fixed_variable="F"></ean>
+	<ean app_id="17" description="Expiration Date (Safety) (YYMMDD)" max_length="6" fixed_variable="F"></ean>
+	<ean app_id="20" description="Product Variant" max_length="2" fixed_variable="F"></ean>
+	<ean app_id="21" description="Serial Number" max_length="20" fixed_variable="V"></ean>
+	<ean app_id="22" description="HIBCC - Quantity, Date, Batch and Link" max_length="29" fixed_variable="V"></ean>
+	<ean app_id="230" description="Lot Number (Transitional Use)" max_length="1" fixed_variable="F"></ean>
+	<ean app_id="231" description="Lot Number (Transitional Use)" max_length="3" fixed_variable="F"></ean>
+	<ean app_id="232" description="Lot Number (Transitional Use)" max_length="5" fixed_variable="F"></ean>
+	<ean app_id="233" description="Lot Number (Transitional Use)" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="234" description="Lot Number (Transitional Use)" max_length="9" fixed_variable="F"></ean>
+	<ean app_id="235" description="Lot Number (Transitional Use)" max_length="11" fixed_variable="F"></ean>
+	<ean app_id="236" description="Lot Number (Transitional Use)" max_length="13" fixed_variable="F"></ean>
+	<ean app_id="237" description="Lot Number (Transitional Use)" max_length="15" fixed_variable="F"></ean>
+	<ean app_id="238" description="Lot Number (Transitional Use)" max_length="17" fixed_variable="F"></ean>
+	<ean app_id="239" description="Lot Number (Transitional Use)" max_length="19" fixed_variable="F"></ean>
+	<ean app_id="240" description="Additional Product Identification assigned by the Manufacturer" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="250" description="Secondary Serial Number" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="30" description="Quantity" max_length="8" fixed_variable="V"></ean>
+	<ean app_id="310" description="Net Weight, Kilograms" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="311" description="Length or 1st Dimension, Meters" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="312" description="Width, Diameter or 2nd Dimension, Meters" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="313" description="Depth, Thickness, Height or 3rd Dimension, Meters" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="314" description="Area, Square Meters" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="315" description="Volume, Liters" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="316" description="Volume, Cubic Meters" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="320" description="Net Weight, Pounds" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="321" description="Length or 1st Dimension, Inches" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="322" description="Length or 1st Dimension, Feet" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="323" description="Length or 1st Dimension, Yards" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="324" description="Width, Diameter, or 2nd Dimension, Inches" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="325" description="Width, Diameter, or 2nd Dimension, Feet" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="326" description="Width, Diameter, or 2nd Dimension, Yards" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="327" description="Depth, Thickness, Height or 3rd Dimension, Inches" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="328" description="Depth, Thickness, Height or 3rd Dimension, Feet" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="329" description="Depth, Thickness, Height or 3rd Dimension, Yards" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="330" description="Gross Weight, Kilograms" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="331" description="Length or 1st Dimension, Meters, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="332" description="Width, Diameter or 2nd Dimension, Meters, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="333" description="Depth, Thickness, Height or 3rd Dimension, Meters, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="334" description="Area, Square Meters, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="335" description="Gross Volume, Liters" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="336" description="Gross Volume, Cubic Meters" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="340" description="Gross Weight, Pounds" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="341" description="Length or 1st Dimension, Inches, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="342" description="Length or 1st Dimension, Feet, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="343" description="Length or 1st Dimension, Yards, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="344" description="Width, Diameter or 2nd Dimension, Inches, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="345" description="Width, Diameter or 2nd Dimension, Feet, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="346" description="Width, Diameter or 2nd Dimension, Yards, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="347" description="Depth, Thickness, Height or 3rd Dimension, Inches, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="348" description="Depth, Thickness, Height or 3rd Dimension, Feet, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="349" description="Depth, Thickness, Height or 3rd Dimension, Yards, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="350" description="Area, Square Inches" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="351" description="Area, Square Feet" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="352" description="Area, Square Yards" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="353" description="Area, Square Inches, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="354" description="Area, Square Feet, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="355" description="Area, Square Yards, Logistics" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="356" description="Net Weight, Troy Ounce" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="360" description="Volume, Quarts" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="361" description="Volume, Gallons" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="362" description="Gross Volume, Quarts" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="363" description="Gross Volume, Gallons" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="364" description="Volume, Cubic Inches" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="365" description="Volume, Cubic Feet" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="366" description="Volume, Cubic Yards" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="367" description="Gross Volume, Cubic Inches" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="368" description="Gross Volume, Cubic Feet" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="369" description="Gross Volume, Cubic Yards" max_length="7" fixed_variable="F"></ean>
+	<ean app_id="37" description="Quantity of Units Contained (For Use With AI 02 Only)" max_length="8" fixed_variable="V"></ean>
+	<ean app_id="400" description="Customer Purchase Order Number" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="410" description="Ship To (Deliver To) Location Code Using EAN-13" max_length="13" fixed_variable="F"></ean>
+	<ean app_id="411" description="Bill To (Invoice To) Location Code Using EAN-13" max_length="13" fixed_variable="F"></ean>
+	<ean app_id="412" description="Purchase From (Location Code of Party from Whom Goods are Purchased)" max_length="13" fixed_variable="F"></ean>
+	<ean app_id="414" description="EAN Location Code for Physical Identification" max_length="13" fixed_variable="F"></ean>
+	<ean app_id="420" description="Ship To (Deliver To) Postal Code Within a Single Postal Authority" max_length="9" fixed_variable="V"></ean>
+	<ean app_id="421" description="Ship To (Deliver To) Postal Code With 3-Digit ISO Country Code Prefix" max_length="12" fixed_variable="V"></ean>
+	<ean app_id="8001" description="Roll products - Width, Length, Core Diameter, Direction and Splices" max_length="14" fixed_variable="F"></ean>
+	<ean app_id="8002" description="Electronic Serial Number for Cellular Mobile Telephones" max_length="20" fixed_variable="V"></ean>
+	<ean app_id="8003" description="UPC/EAN Number and Serial Number of Returnable Asset" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="8004" description="UCC/EAN Serial Identification" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="8005" description="Identifies the Price Per Unit of Measure" max_length="6" fixed_variable="F"></ean>
+	<ean app_id="8100" description="Coupon Extended Code - Number System Character and Offer" max_length="6" fixed_variable="F"></ean>
+	<ean app_id="8101" description="Coupon Extended Code - Number System Character, Offer, and End of Offer" max_length="10" fixed_variable="F"></ean>
+	<ean app_id="8102" description="Coupon Extended Code - Number System Character preceded by zero" max_length="2" fixed_variable="F"></ean>
+	<ean app_id="90" description="Mutually Agreed, Between Trading Partners or FACT DIs" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="91" description="Intra-Company (Internal)" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="92" description="Intra-Company (Internal)" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="93" description="Intra-Company (Internal)" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="94" description="Intra-Company (Internal)" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="95" description="Internal-Carriers" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="96" description="Internal-Carriers" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="97" description="Intra-Company (Internal)" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="98" description="Intra-Company (Internal)" max_length="30" fixed_variable="V"></ean>
+	<ean app_id="99" description="Internal" max_length="30" fixed_variable="V"></ean>
+</gs1>
+
