@@ -644,6 +644,8 @@ public class ZPLFrame extends JFrame
 	{
 		File result = null;
 
+		ZPLCommon.zplFolderFile = new File(settings.defaultInputFolder);
+		
 		JFileChooser fc = new JFileChooser(ZPLCommon.zplFolderFile);
 		fc.setSelectedFile(ZPLCommon.zplFolderFile);
 
@@ -787,7 +789,15 @@ public class ZPLFrame extends JFrame
 					pageCount++;
 					displayPageCount();
 
-					outpanel.add(viewPanel);
+					if (settings.labelOrder.equals("Add First"))
+					{
+						outpanel.add(viewPanel,0);
+					}
+					else
+					{
+						outpanel.add(viewPanel);
+					}
+
 					viewPanel.revalidate();
 					viewPanel.repaint();
 					scrollPane.revalidate();

@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -44,7 +45,11 @@ public class JDialogSettings extends JDialog
 	SettingUtil setutil = new SettingUtil();
 	JTextField fld_InputFolder = new JTextField();
 	JTextField fld_PortNo = new JTextField();
+	JTextField fld_MaxPages = new JTextField();
 	JTextField fld_Magnification = new JTextField();
+	JCheckBox fld_SaveToHome = new JCheckBox();
+	JTextField fld_alternateSaveLocation = new JTextField();
+	JButton4j btn_SaveFolder = new JButton4j(ZPLCommon.icon_select_folder);
 	JComboBox<String> comboBoxAppendLabelSequence = new JComboBox<String>();
 	ZPLUtility utils = new ZPLUtility();
 
@@ -63,7 +68,7 @@ public class JDialogSettings extends JDialog
 		setTitle("Settings");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		ZPLUtility util = new ZPLUtility();
-		setSize(new Dimension(800, 620));
+		setSize(new Dimension(800, 680));
 
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -79,7 +84,7 @@ public class JDialogSettings extends JDialog
 
 		JPanelFontData one = new JPanelFontData(this.parent);
 		int width = one.totalwidth + 40;
-		int height = 400;
+		int height = 350;
 
 		List<String> keys = new ArrayList<>(memory.zplFont.zebraFontLookup.keySet());
 		Collections.sort(keys);
@@ -176,13 +181,60 @@ public class JDialogSettings extends JDialog
 		JLabel4j_std lbl_InputFolder = new JLabel4j_std("Input Folder");
 		lbl_InputFolder.setHorizontalAlignment(SwingConstants.TRAILING);
 		lbl_InputFolder.setFont(ZPLCommon.font_bold);
-		lbl_InputFolder.setBounds(lbl_PanelOrder.getX(),lbl_PanelOrder.getY()+lbl_PanelOrder.getHeight()+20,100,24);
+		lbl_InputFolder.setBounds(lbl_PanelOrder.getX(),lbl_PanelOrder.getY()+lbl_PanelOrder.getHeight()+10,100,24);
 		contentPanel.add(lbl_InputFolder);
-		
 
-		fld_InputFolder.setBounds(comboBoxAppendLabelSequence.getX(),lbl_InputFolder.getY(),500,24);
+		fld_InputFolder.setBounds(comboBoxAppendLabelSequence.getX(),lbl_InputFolder.getY(),600,24);
 		fld_InputFolder.setText(settings.defaultInputFolder);
 		contentPanel.add(fld_InputFolder);
+		
+		JLabel4j_std lbl_MaxPages = new JLabel4j_std("Max Pages");
+		lbl_MaxPages.setHorizontalAlignment(SwingConstants.TRAILING);
+		lbl_MaxPages.setFont(ZPLCommon.font_bold);
+		lbl_MaxPages.setBounds(lbl_InputFolder.getX(),lbl_InputFolder.getY()+lbl_InputFolder.getHeight()+10,100,24);
+		contentPanel.add(lbl_MaxPages);
+		
+		fld_MaxPages.setBounds(fld_InputFolder.getX(),lbl_MaxPages.getY(),50,24);
+		fld_MaxPages.setText(settings.maxPages);
+		fld_MaxPages.setHorizontalAlignment(SwingConstants.CENTER);
+		contentPanel.add(fld_MaxPages);
+		
+		
+		JLabel4j_std lbl_SaveToHome = new JLabel4j_std("Save to Home");
+		lbl_SaveToHome.setHorizontalAlignment(SwingConstants.TRAILING);
+		lbl_SaveToHome.setFont(ZPLCommon.font_bold);
+		lbl_SaveToHome.setBounds(lbl_MaxPages.getX(),lbl_MaxPages.getY()+lbl_MaxPages.getHeight()+10,100,24);
+		contentPanel.add(lbl_SaveToHome);
+		
+		boolean savetohome = Boolean.valueOf(settings.saveToHome);
+		fld_SaveToHome.setBounds(fld_InputFolder.getX(),lbl_SaveToHome.getY(),30,30);
+		fld_SaveToHome.setSelected(savetohome);
+		fld_SaveToHome.setHorizontalAlignment(SwingConstants.LEADING);
+		fld_SaveToHome.setVerticalAlignment(SwingConstants.NORTH);
+		contentPanel.add(fld_SaveToHome);
+		fld_SaveToHome.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				fld_alternateSaveLocation.setEnabled(!fld_SaveToHome.isSelected());
+				btn_SaveFolder.setEnabled(!fld_SaveToHome.isSelected());
+				if (fld_alternateSaveLocation.getText().equals(""))
+				{
+					fld_alternateSaveLocation.setText(System.getProperty("user.home"));
+				}
+			}
+		});
+		
+		JLabel4j_std lbl_alternateSaveLocation = new JLabel4j_std("Save Location");
+		lbl_alternateSaveLocation.setHorizontalAlignment(SwingConstants.TRAILING);
+		lbl_alternateSaveLocation.setFont(ZPLCommon.font_bold);
+		lbl_alternateSaveLocation.setBounds(lbl_SaveToHome.getX(),lbl_SaveToHome.getY()+lbl_SaveToHome.getHeight()+10,100,24);
+		contentPanel.add(lbl_alternateSaveLocation);
+		
+		fld_alternateSaveLocation.setBounds(fld_InputFolder.getX(),lbl_alternateSaveLocation.getY(),600,24);
+		fld_alternateSaveLocation.setText(settings.alternateSaveLocation);
+		fld_alternateSaveLocation.setEnabled(!savetohome);
+		contentPanel.add(fld_alternateSaveLocation);
 		
 		JButton4j btn_InputFolder = new JButton4j(ZPLCommon.icon_select_folder);
 		btn_InputFolder.setBounds(fld_InputFolder.getX()+fld_InputFolder.getWidth(),fld_InputFolder.getY()-(28-fld_InputFolder.getHeight()),32,32);
@@ -206,6 +258,29 @@ public class JDialogSettings extends JDialog
 			}
 		});
 		
+
+		btn_SaveFolder.setBounds(fld_alternateSaveLocation.getX()+fld_alternateSaveLocation.getWidth(),fld_alternateSaveLocation.getY()-(28-fld_alternateSaveLocation.getHeight()),32,32);
+		btn_SaveFolder.setPreferredSize(new Dimension(32,32));
+		btn_SaveFolder.setSize(new Dimension(32,32));
+		btn_SaveFolder.setMaximumSize(new Dimension(32,32));
+		btn_SaveFolder.setEnabled(!savetohome);
+		btn_SaveFolder.setFocusable(false);
+		contentPanel.add(btn_SaveFolder);
+		btn_SaveFolder.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				File workingFolder = utils.stringToPath(fld_alternateSaveLocation.getText());
+				File directory = selectDirectory(workingFolder);
+
+				if (directory != null)
+				{
+					fld_alternateSaveLocation.setText(directory.getPath());
+
+				}
+			}
+		});
+		
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -221,6 +296,9 @@ public class JDialogSettings extends JDialog
 				settings.portNumber=fld_PortNo.getText();
 				settings.labelOrder=comboBoxAppendLabelSequence.getSelectedItem().toString();
 				settings.magnification=fld_Magnification.getText();
+				settings.maxPages=fld_MaxPages.getText();
+				settings.saveToHome=String.valueOf(fld_SaveToHome.isSelected());
+				settings.alternateSaveLocation=fld_alternateSaveLocation.getText();
 				setutil.saveConfigToXml(settings);
 				
 				dispose();

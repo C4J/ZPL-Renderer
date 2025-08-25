@@ -6,4 +6,7 @@ public class Settings
     public String labelOrder 			= "Add Last";
     public String portNumber 			= "9100";
     public String magnification 		= "0.5";
+    public String maxPages				= "10";
+    public String saveToHome			= "true";
+    public String alternateSaveLocation = ".";
 }

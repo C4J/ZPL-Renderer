@@ -53,25 +53,26 @@ public class SettingUtil
 						switch (name)
 						{
 							case "inputFolder":
-							{
 								result.defaultInputFolder = child.getTextContent().trim();
 								break;
-							}
 							case "labelOrder":
-							{
 								result.labelOrder = child.getTextContent().trim();
 								break;
-							}
 							case "portNo":
-							{
 								result.portNumber = child.getTextContent().trim();
 								break;
-							}
 							case "magnification":
-							{
 								result.magnification = child.getTextContent().trim();
-	
-							}
+								break;
+							case "maxPages":
+								result.maxPages = child.getTextContent().trim();
+								break;
+							case "saveToHome":
+								result.saveToHome = child.getTextContent().trim();
+								break;
+							case "alternateSaveLocation":
+								result.alternateSaveLocation = child.getTextContent().trim();
+								break;
 						}
 					}
 				}
@@ -119,6 +120,18 @@ public class SettingUtil
 			Element magnification = (Element) doc.createElement("magnification");
 			magnification.appendChild(doc.createTextNode(settings.magnification));
 			settingsElement.appendChild(magnification);
+			
+			Element maxPages = (Element) doc.createElement("maxPages");
+			maxPages.appendChild(doc.createTextNode(settings.maxPages));
+			settingsElement.appendChild(maxPages);
+			
+			Element saveToHome = (Element) doc.createElement("saveToHome");
+			saveToHome.appendChild(doc.createTextNode(settings.saveToHome));
+			settingsElement.appendChild(saveToHome);
+			
+			Element alternateSaveLocation = (Element) doc.createElement("alternateSaveLocation");
+			alternateSaveLocation.appendChild(doc.createTextNode(settings.alternateSaveLocation));
+			settingsElement.appendChild(alternateSaveLocation);
 
 			// Write the content into XML file
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();

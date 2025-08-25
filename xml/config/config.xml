@@ -5,5 +5,8 @@
         <labelOrder>Add First</labelOrder>
         <portNo>9100</portNo>
         <magnification>0.5</magnification>
+        <maxPages>6</maxPages>
+        <saveToHome>true</saveToHome>
+        <alternateSaveLocation>/Users/dave/Commander4j</alternateSaveLocation>
     </settings>
 </config>
