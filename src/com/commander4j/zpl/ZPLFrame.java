@@ -67,7 +67,7 @@ import com.commander4j.util.ZPLUtility;
 public class ZPLFrame extends JFrame
 {
 	private static final long serialVersionUID = 1L;
-	public static final String version = "1.30";
+	public static final String version = "1.32";
 
 	private JPanel outpanel = new JPanel();
 
@@ -619,17 +619,17 @@ public class ZPLFrame extends JFrame
 		outpanel.removeAll();
 		outpanel.revalidate();
 		outpanel.repaint();
-		
+
 		setAppTitle(currentfilename);
-		
+
 		pageCount = 0;
-		
+
 		ZPLCommon.config.get(uuid).zplFont.zplFontCache.clear();
-		
+
 		resetMagnification();
 		displayPageCount();
 		updatePaperSize();
-		
+
 		scrollPane.revalidate();
 		scrollPane.repaint();
 	}
@@ -645,7 +645,7 @@ public class ZPLFrame extends JFrame
 		File result = null;
 
 		ZPLCommon.zplFolderFile = new File(settings.defaultInputFolder);
-		
+
 		JFileChooser fc = new JFileChooser(ZPLCommon.zplFolderFile);
 		fc.setSelectedFile(ZPLCommon.zplFolderFile);
 
@@ -697,7 +697,7 @@ public class ZPLFrame extends JFrame
 		currentfilename = filename;
 
 		pageNo = 1;
-		
+
 		ZPLCommon.config.get(uuid).zplFont.zplFontCache.clear();
 
 		setAppTitle(currentfilename);
@@ -707,7 +707,7 @@ public class ZPLFrame extends JFrame
 		ZPLParser zplparse = new ZPLParser(this.uuid);
 
 		String zpl = zplparse.readFromFile(currentfilename);
-		
+
 		processZPL(zpl, uuid);
 
 	}
@@ -787,16 +787,36 @@ public class ZPLFrame extends JFrame
 					viewPanel.setBorder(new LineBorder(Color.RED));
 					pageNo++;
 					pageCount++;
-					displayPageCount();
+
 
 					if (settings.labelOrder.equals("Add First"))
 					{
-						outpanel.add(viewPanel,0);
+						outpanel.add(viewPanel, 0);
 					}
 					else
 					{
 						outpanel.add(viewPanel);
 					}
+
+					int maxLabels = Integer.valueOf(settings.maxPages);
+
+					int currentLabels = outpanel.getComponents().length;
+					
+
+					if (currentLabels > maxLabels)
+					{
+						if (settings.labelOrder.equals("Add First"))
+						{
+							//outpanel.remove(0);
+							outpanel.remove(maxLabels);
+						}
+						else
+						{
+							outpanel.remove(0);
+						}
+						pageCount=maxLabels;
+					}
+					displayPageCount();
 
 					viewPanel.revalidate();
 					viewPanel.repaint();

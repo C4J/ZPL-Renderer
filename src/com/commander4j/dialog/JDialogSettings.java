@@ -10,6 +10,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,7 +25,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
@@ -46,7 +49,7 @@ public class JDialogSettings extends JDialog
 	JTextField fld_InputFolder = new JTextField();
 	JTextField fld_PortNo = new JTextField();
 	JTextField fld_MaxPages = new JTextField();
-	JTextField fld_Magnification = new JTextField();
+	JSpinner fld_Magnification = new JSpinner();
 	JCheckBox fld_SaveToHome = new JCheckBox();
 	JTextField fld_alternateSaveLocation = new JTextField();
 	JButton4j btn_SaveFolder = new JButton4j(ZPLCommon.icon_select_folder);
@@ -173,9 +176,23 @@ public class JDialogSettings extends JDialog
 		lbl_Magnification.setBounds(fld_PortNo.getX()+fld_PortNo.getWidth()+20,fld_PortNo.getY(),120,24);
 		contentPanel.add(lbl_Magnification);
 		
-		fld_Magnification.setBounds(lbl_Magnification.getX()+lbl_Magnification.getWidth()+10,lbl_Magnification.getY(),50,24);
-		fld_Magnification.setText(settings.magnification);
-		fld_Magnification.setHorizontalAlignment(SwingConstants.CENTER);
+        // Create a SpinnerNumberModel
+        double min = 0.10;
+        double max = 2.00;
+        double step = 0.05;
+        double initial = Double.valueOf(settings.magnification);
+
+        SpinnerNumberModel model = new SpinnerNumberModel(initial, min, max, step);
+
+		fld_Magnification.setModel(model);
+		
+        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(fld_Magnification, "0.00");
+        DecimalFormat format = editor.getFormat();
+        format.setMinimumFractionDigits(2);
+        format.setMaximumFractionDigits(2);
+        fld_Magnification.setEditor(editor);
+        
+		fld_Magnification.setBounds(lbl_Magnification.getX()+lbl_Magnification.getWidth()+10,lbl_Magnification.getY(),70,24);
 		contentPanel.add(fld_Magnification);
 		
 		JLabel4j_std lbl_InputFolder = new JLabel4j_std("Input Folder");
@@ -295,7 +312,7 @@ public class JDialogSettings extends JDialog
 				settings.defaultInputFolder=fld_InputFolder.getText();
 				settings.portNumber=fld_PortNo.getText();
 				settings.labelOrder=comboBoxAppendLabelSequence.getSelectedItem().toString();
-				settings.magnification=fld_Magnification.getText();
+				settings.magnification=fld_Magnification.getValue().toString();
 				settings.maxPages=fld_MaxPages.getText();
 				settings.saveToHome=String.valueOf(fld_SaveToHome.isSelected());
 				settings.alternateSaveLocation=fld_alternateSaveLocation.getText();

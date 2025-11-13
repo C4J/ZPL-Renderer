@@ -2,10 +2,10 @@
 <config>
     <settings>
         <inputFolder>./examples</inputFolder>
-        <labelOrder>Add First</labelOrder>
+        <labelOrder>Add Last</labelOrder>
         <portNo>9100</portNo>
         <magnification>0.5</magnification>
-        <maxPages>6</maxPages>
+        <maxPages>3</maxPages>
         <saveToHome>true</saveToHome>
         <alternateSaveLocation>/Users/dave/Commander4j</alternateSaveLocation>
     </settings>
