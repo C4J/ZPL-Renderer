@@ -74,13 +74,15 @@ public class ZPLBarcode_QRCode
 	    try {
 	        ig.setBackground(java.awt.Color.WHITE);
 	        ig.clearRect(0, 0, imgW, imgH);
+	        ig.setColor(java.awt.Color.WHITE);
+	        ig.fillRect(0, 0, imgW, imgH);
 	        ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 	        ig.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
 	        // This constructor scales each module to pxPerModule and draws including quiet zone at (0,0)
 	        Java2DRenderer renderer = new Java2DRenderer(ig, pxPerModule,
-	                uk.org.okapibarcode.graphics.Color.BLACK,
-	                uk.org.okapibarcode.graphics.Color.WHITE);
+	                uk.org.okapibarcode.graphics.Color.WHITE,
+	                uk.org.okapibarcode.graphics.Color.BLACK);
 	        renderer.render(bean);
 	    } finally {
 	        ig.dispose();
