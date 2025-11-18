@@ -89,6 +89,11 @@ public class ZPLBarcode_EAN128
 		barHeight = bean.getBarHeight();
 		barHeight= (int) (barHeight*magnification);
 		
+		if (memory.bps.recallAsStringWithDefault("^FD", ZPLPropertyStore.Param_Text_Modified, "").equals("")==false)
+		{
+			
+
+		
 		bean.setContent(memory.bps.recallAsStringWithDefault("^FD", ZPLPropertyStore.Param_Text_Modified, ""));
 
 		int width = (int) (bean.getWidth()*magnification);
@@ -113,7 +118,7 @@ public class ZPLBarcode_EAN128
 		int y = memory.bps.recallAsIntegerWithDefault(memory.anchor_mode, "Y", 0);
 
 		g2d.drawImage(barcodeImage, x, y-modeAdjust, null);
-
+		}
 		return result;
 	}
 }
