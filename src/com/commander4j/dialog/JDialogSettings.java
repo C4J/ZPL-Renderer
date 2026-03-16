@@ -65,6 +65,8 @@ public class JDialogSettings extends JDialog
 	public JDialogSettings(JFrame parent, ZPLMemory memory,Settings settings)
 	{
 		super(parent);
+		setModalityType(ModalityType.DOCUMENT_MODAL);
+		setResizable(false);
 
 		this.parent = parent;
 
@@ -93,9 +95,9 @@ public class JDialogSettings extends JDialog
 		Collections.sort(keys);
 
 		for (String key : keys) {
-			
+
 			ZPLFontProperties fp = memory.zplFont.zebraFontLookup.get(key);
-			
+
 			one = new JPanelFontData(this.parent);
 			one.fld_FontID.setHorizontalAlignment(SwingConstants.CENTER);
 			one.fld_FontID.setText(fp.id);
@@ -105,7 +107,7 @@ public class JDialogSettings extends JDialog
 			one.fld_Filename.setText(fp.filename);
 			one.fld_Render.setSelectedItem(fp.renderer);
 			one.fld_Spacing.setSelectedItem(fp.spacing);
-			
+
 			main.add(one);
 		}
 
@@ -114,7 +116,7 @@ public class JDialogSettings extends JDialog
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
 		scrollPane.setBounds(18, 40, width, height);
-		
+
 		contentPanel.add(scrollPane);
 
 		JLabel4j_std lblNewLabel = new JLabel4j_std("Font ID");
@@ -127,7 +129,7 @@ public class JDialogSettings extends JDialog
 		lblFontName.setFont(ZPLCommon.font_bold);
 		lblFontName.setBounds(scrollPane.getX() + one.idwidth+5, scrollPane.getY() - 15, 128, 16);
 		contentPanel.add(lblFontName);
-		
+
 		JLabel4j_std lblFontDimensions = new JLabel4j_std("H  x  W");
 		lblFontDimensions.setFont(ZPLCommon.font_bold);
 		lblFontDimensions.setBounds(scrollPane.getX() + one.idwidth + one.namewidth+one.buttonwidth+25, scrollPane.getY() - 15, 128, 16);
@@ -137,12 +139,12 @@ public class JDialogSettings extends JDialog
 		lblFilename.setFont(ZPLCommon.font_bold);
 		lblFilename.setBounds(scrollPane.getX() + one.idwidth + one.namewidth +one.buttonwidth+one.heightwidth +one.widthwidth + 20, scrollPane.getY() - 15, 128, 16);
 		contentPanel.add(lblFilename);
-		
+
 		JLabel4j_std lblRender = new JLabel4j_std("Rendering");
 		lblRender.setFont(ZPLCommon.font_bold);
 		lblRender.setBounds(scrollPane.getX() + one.idwidth + one.namewidth +one.buttonwidth+one.heightwidth +one.widthwidth +one.filenamewidth+one.buttonwidth+ 20, scrollPane.getY() - 15, 128, 16);
 		contentPanel.add(lblRender);
-		
+
 		JLabel4j_std lblSpacing = new JLabel4j_std("Spacing");
 		lblSpacing.setFont(ZPLCommon.font_bold);
 		lblSpacing.setBounds(scrollPane.getX() + one.idwidth + one.namewidth +one.buttonwidth+one.heightwidth +one.widthwidth +one.filenamewidth+one.buttonwidth+one.renderwidth+ 20, scrollPane.getY() - 15, 128, 16);
@@ -153,29 +155,29 @@ public class JDialogSettings extends JDialog
 		lbl_PanelOrder.setFont(ZPLCommon.font_bold);
 		lbl_PanelOrder.setBounds(scrollPane.getX(),scrollPane.getY()+scrollPane.getHeight()+20,100,24);
 		contentPanel.add(lbl_PanelOrder);
-		
+
 		comboBoxAppendLabelSequence.setBounds(lbl_PanelOrder.getX()+20+lbl_PanelOrder.getWidth(),lbl_PanelOrder.getY(),100,24);
 		comboBoxAppendLabelSequence.setModel(new DefaultComboBoxModel<String>(new String[] {"Add First","Add Last"}));
 		comboBoxAppendLabelSequence.setSelectedItem(settings.labelOrder);
 		contentPanel.add(comboBoxAppendLabelSequence);
-		
+
 		JLabel4j_std lbl_PortNo = new JLabel4j_std("Port Number");
 		lbl_PortNo.setHorizontalAlignment(SwingConstants.TRAILING);
 		lbl_PortNo.setFont(ZPLCommon.font_bold);
 		lbl_PortNo.setBounds(comboBoxAppendLabelSequence.getX()+comboBoxAppendLabelSequence.getWidth()+20,comboBoxAppendLabelSequence.getY(),80,24);
 		contentPanel.add(lbl_PortNo);
-		
+
 		fld_PortNo.setBounds(lbl_PortNo.getX()+lbl_PortNo.getWidth()+10,lbl_PortNo.getY(),50,24);
 		fld_PortNo.setText(settings.portNumber);
 		fld_PortNo.setHorizontalAlignment(SwingConstants.CENTER);
 		contentPanel.add(fld_PortNo);
-		
+
 		JLabel4j_std lbl_Magnification = new JLabel4j_std("Default Magnification");
 		lbl_Magnification.setHorizontalAlignment(SwingConstants.TRAILING);
 		lbl_Magnification.setFont(ZPLCommon.font_bold);
 		lbl_Magnification.setBounds(fld_PortNo.getX()+fld_PortNo.getWidth()+20,fld_PortNo.getY(),120,24);
 		contentPanel.add(lbl_Magnification);
-		
+
         // Create a SpinnerNumberModel
         double min = 0.10;
         double max = 2.00;
@@ -185,16 +187,16 @@ public class JDialogSettings extends JDialog
         SpinnerNumberModel model = new SpinnerNumberModel(initial, min, max, step);
 
 		fld_Magnification.setModel(model);
-		
+
         JSpinner.NumberEditor editor = new JSpinner.NumberEditor(fld_Magnification, "0.00");
         DecimalFormat format = editor.getFormat();
         format.setMinimumFractionDigits(2);
         format.setMaximumFractionDigits(2);
         fld_Magnification.setEditor(editor);
-        
+
 		fld_Magnification.setBounds(lbl_Magnification.getX()+lbl_Magnification.getWidth()+10,lbl_Magnification.getY(),70,24);
 		contentPanel.add(fld_Magnification);
-		
+
 		JLabel4j_std lbl_InputFolder = new JLabel4j_std("Input Folder");
 		lbl_InputFolder.setHorizontalAlignment(SwingConstants.TRAILING);
 		lbl_InputFolder.setFont(ZPLCommon.font_bold);
@@ -204,25 +206,25 @@ public class JDialogSettings extends JDialog
 		fld_InputFolder.setBounds(comboBoxAppendLabelSequence.getX(),lbl_InputFolder.getY(),600,24);
 		fld_InputFolder.setText(settings.defaultInputFolder);
 		contentPanel.add(fld_InputFolder);
-		
+
 		JLabel4j_std lbl_MaxPages = new JLabel4j_std("Max Pages");
 		lbl_MaxPages.setHorizontalAlignment(SwingConstants.TRAILING);
 		lbl_MaxPages.setFont(ZPLCommon.font_bold);
 		lbl_MaxPages.setBounds(lbl_InputFolder.getX(),lbl_InputFolder.getY()+lbl_InputFolder.getHeight()+10,100,24);
 		contentPanel.add(lbl_MaxPages);
-		
+
 		fld_MaxPages.setBounds(fld_InputFolder.getX(),lbl_MaxPages.getY(),50,24);
 		fld_MaxPages.setText(settings.maxPages);
 		fld_MaxPages.setHorizontalAlignment(SwingConstants.CENTER);
 		contentPanel.add(fld_MaxPages);
-		
-		
+
+
 		JLabel4j_std lbl_SaveToHome = new JLabel4j_std("Save to Home");
 		lbl_SaveToHome.setHorizontalAlignment(SwingConstants.TRAILING);
 		lbl_SaveToHome.setFont(ZPLCommon.font_bold);
 		lbl_SaveToHome.setBounds(lbl_MaxPages.getX(),lbl_MaxPages.getY()+lbl_MaxPages.getHeight()+10,100,24);
 		contentPanel.add(lbl_SaveToHome);
-		
+
 		boolean savetohome = Boolean.valueOf(settings.saveToHome);
 		fld_SaveToHome.setBounds(fld_InputFolder.getX(),lbl_SaveToHome.getY(),30,30);
 		fld_SaveToHome.setSelected(savetohome);
@@ -241,18 +243,18 @@ public class JDialogSettings extends JDialog
 				}
 			}
 		});
-		
+
 		JLabel4j_std lbl_alternateSaveLocation = new JLabel4j_std("Save Location");
 		lbl_alternateSaveLocation.setHorizontalAlignment(SwingConstants.TRAILING);
 		lbl_alternateSaveLocation.setFont(ZPLCommon.font_bold);
 		lbl_alternateSaveLocation.setBounds(lbl_SaveToHome.getX(),lbl_SaveToHome.getY()+lbl_SaveToHome.getHeight()+10,100,24);
 		contentPanel.add(lbl_alternateSaveLocation);
-		
+
 		fld_alternateSaveLocation.setBounds(fld_InputFolder.getX(),lbl_alternateSaveLocation.getY(),600,24);
 		fld_alternateSaveLocation.setText(settings.alternateSaveLocation);
 		fld_alternateSaveLocation.setEnabled(!savetohome);
 		contentPanel.add(fld_alternateSaveLocation);
-		
+
 		JButton4j btn_InputFolder = new JButton4j(ZPLCommon.icon_select_folder);
 		btn_InputFolder.setBounds(fld_InputFolder.getX()+fld_InputFolder.getWidth(),fld_InputFolder.getY()-(28-fld_InputFolder.getHeight()),32,32);
 		btn_InputFolder.setPreferredSize(new Dimension(32,32));
@@ -274,7 +276,7 @@ public class JDialogSettings extends JDialog
 				}
 			}
 		});
-		
+
 
 		btn_SaveFolder.setBounds(fld_alternateSaveLocation.getX()+fld_alternateSaveLocation.getWidth(),fld_alternateSaveLocation.getY()-(28-fld_alternateSaveLocation.getHeight()),32,32);
 		btn_SaveFolder.setPreferredSize(new Dimension(32,32));
@@ -297,7 +299,7 @@ public class JDialogSettings extends JDialog
 				}
 			}
 		});
-		
+
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -308,7 +310,7 @@ public class JDialogSettings extends JDialog
 			public void actionPerformed(ActionEvent e)
 			{
 				saveFonts(memory);
-				
+
 				settings.defaultInputFolder=fld_InputFolder.getText();
 				settings.portNumber=fld_PortNo.getText();
 				settings.labelOrder=comboBoxAppendLabelSequence.getSelectedItem().toString();
@@ -317,7 +319,7 @@ public class JDialogSettings extends JDialog
 				settings.saveToHome=String.valueOf(fld_SaveToHome.isSelected());
 				settings.alternateSaveLocation=fld_alternateSaveLocation.getText();
 				setutil.saveConfigToXml(settings);
-				
+
 				dispose();
 			}
 		});
@@ -348,7 +350,7 @@ public class JDialogSettings extends JDialog
 		setBounds(screenBounds.x + ((screenBounds.width - JDialogSettings.this.getWidth()) / 2), screenBounds.y + ((screenBounds.height - JDialogSettings.this.getHeight()) / 2), JDialogSettings.this.getWidth() + widthadjustment,
 				JDialogSettings.this.getHeight() + heightadjustment);
 
-		setVisible(true);
+		//setVisible(true);
 	}
 
 	private void saveFonts(ZPLMemory memory)
@@ -373,11 +375,11 @@ public class JDialogSettings extends JDialog
 		}
 
 		memory.zplFont.saveFontsToXml(list);
-		
+
 		memory.zplFont.readFontsFromXml();
 
 	}
-	
+
 	private File selectDirectory(File defaultPath)
 	{
 		File result = null;
