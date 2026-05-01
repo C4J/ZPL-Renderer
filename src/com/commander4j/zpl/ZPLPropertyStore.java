@@ -3,7 +3,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ZPLPropertyStore {
-	
+
 	public static final String Param_Label_Top 						= "Label Top";
 	public static final String Param_Label_Left 					= "Label Left";
 	public static final String Param_X 								= "X";
@@ -61,7 +61,7 @@ public class ZPLPropertyStore {
     		barcodeProperties.remove(barcodeType);
     	}
     }
-    
+
     /**
      * Stores a parameter value for a given barcode type and parameter name.
      *
@@ -71,7 +71,7 @@ public class ZPLPropertyStore {
      */
     public void store(String barcodeType, String parameterName, Object parameterValue) {
         barcodeProperties
-            .computeIfAbsent(barcodeType, k -> new HashMap<>())
+            .computeIfAbsent(barcodeType, _ -> new HashMap<>())
             .put(parameterName, parameterValue);
     }
 
@@ -86,7 +86,7 @@ public class ZPLPropertyStore {
         Map<String, Object> params = barcodeProperties.get(barcodeType);
         return (params != null) ? params.get(parameterName) : null;
     }
-        
+
     public int recallAsIntegerWithDefault(String barcodeType, String parameterName, int defaultValue) {
         Map<String, Object> params = barcodeProperties.get(barcodeType);
         if (params == null) return defaultValue;
@@ -104,7 +104,7 @@ public class ZPLPropertyStore {
             return defaultValue;
         }
     }
-    
+
     public double recallAsDoubleWithDefault(String barcodeType, String parameterName, double defaultValue) {
         Map<String, Object> params = barcodeProperties.get(barcodeType);
         if (params == null) return defaultValue;
@@ -122,7 +122,7 @@ public class ZPLPropertyStore {
             return defaultValue;
         }
     }
-    
+
     public float recallAsFloatWithDefault(String barcodeType, String parameterName, float defaultValue) {
         Map<String, Object> params = barcodeProperties.get(barcodeType);
         if (params == null) return defaultValue;
@@ -150,7 +150,7 @@ public class ZPLPropertyStore {
         return (value != null) ? value.toString() : defaultValue;
     }
 
-    
+
     public boolean recallAsBooleanWithDefault(String barcodeType, String parameterName, Boolean defaultValue) {
         Map<String, Object> params = barcodeProperties.get(barcodeType);
 
