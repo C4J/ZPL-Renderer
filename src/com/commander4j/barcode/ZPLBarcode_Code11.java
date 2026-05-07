@@ -59,7 +59,7 @@ public class ZPLBarcode_Code11
 
 		if (memory.bps.recallAsStringWithDefault("^B1",ZPLPropertyStore.Param_Barcode_Interpretation,"N").equals("Y"))
 		{
-			ZPLFontCache ch = memory.zplFont.recallFont(g2d, new ZPLCmd(""), memory, magnification,true);
+			ZPLFontCache ch = memory.zplFont.recallFont(g2d, new ZPLCmd(""), memory, 1.0f, true);
 			
 			bean.setFont(ch.font);
 						

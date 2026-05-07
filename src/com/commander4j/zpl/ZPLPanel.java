@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
 import javax.swing.JPanel;
@@ -85,6 +86,71 @@ public class ZPLPanel extends JPanel
 		repaint();
 		firePropertyChange("magnification", previous, magnification);
 
+	}
+
+	/**
+	 * Render this label off-screen at a specific magnification, decoupled from
+	 * the on-screen UI zoom. Used by PNG export so the saved file has a
+	 * predictable resolution (e.g. full printer-dot resolution) regardless of
+	 * the current zoom. Caller must run on the EDT — this method temporarily
+	 * mutates the shared {@link ZPLMemory} dimensions and the panel's own
+	 * magnification, then restores them in a finally block; any concurrent
+	 * repaint during the swap window would draw with mismatched state.
+	 */
+	public BufferedImage renderAtMagnification(float targetMagnification)
+	{
+		ZPLMemory mem = ZPLCommon.config.get(uuid);
+		if (mem == null)
+		{
+			throw new IllegalStateException("No ZPLMemory for uuid " + uuid);
+		}
+
+		float scaleFactor = targetMagnification / this.magnification;
+
+		float oldMag = this.magnification;
+		float oldMR = mem.printerMariginRight;
+		float oldMB = mem.printerMariginBottom;
+		int oldWidth = getWidth();
+		int oldHeight = getHeight();
+
+		int newW = Math.max(1, Math.round(oldMR * scaleFactor));
+		int newH = Math.max(1, Math.round(oldMB * scaleFactor));
+
+		BufferedImage image = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_RGB);
+		try
+		{
+			mem.printerMariginRight = newW;
+			mem.printerMariginBottom = newH;
+			mem.zplFont.zplFontCache.clear();
+			this.magnification = targetMagnification;
+			setSize(newW, newH);
+			doLayout();
+			validate();
+
+			Graphics2D g2 = image.createGraphics();
+			try
+			{
+				g2.setColor(Color.WHITE);
+				g2.fillRect(0, 0, newW, newH);
+				print(g2);
+			}
+			finally
+			{
+				g2.dispose();
+			}
+		}
+		finally
+		{
+			mem.printerMariginRight = oldMR;
+			mem.printerMariginBottom = oldMB;
+			mem.zplFont.zplFontCache.clear();
+			this.magnification = oldMag;
+			setSize(oldWidth, oldHeight);
+			doLayout();
+			validate();
+		}
+
+		return image;
 	}
 
 	@Override

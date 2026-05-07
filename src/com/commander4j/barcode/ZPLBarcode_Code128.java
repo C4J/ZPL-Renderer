@@ -63,7 +63,10 @@ public class ZPLBarcode_Code128
 		
 		if (memory.bps.recallAsStringWithDefault("^BC",ZPLPropertyStore.Param_Barcode_Interpretation,"N").equals("Y"))
 		{	
-			ZPLFontCache ch = memory.zplFont.recallFont(g2d, new ZPLCmd(""), memory, magnification,true);
+			// Pass 1.0f, not the UI magnification: Okapi's Java2DRenderer.render()
+			// re-applies its own magnification to the font (size *= magnification),
+			// so pre-scaling here would shrink the human-readable text twice.
+			ZPLFontCache ch = memory.zplFont.recallFont(g2d, new ZPLCmd(""), memory, 1.0f, true);
 			
 			bean.setFont(ch.font);		
 			

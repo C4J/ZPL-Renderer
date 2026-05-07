@@ -30,7 +30,6 @@ public class ZPLParser
 			try
 			{
 				result = new String(Files.readAllBytes(file.toPath()));
-				result = result.replace("\n", "");
 			}
 			catch (IOException e)
 			{
@@ -44,6 +43,16 @@ public class ZPLParser
 
 	public ZPLCmdList parseBytes(String data)
 	{
+		// Strip CR/LF before tokenising. Newlines that survive into a command's
+		// argument list cause `parseInt("40\n")` to throw, which the integer
+		// helper silently catches and falls back to the default (typically 0) —
+		// so any ^FO/^FT alone on its own line renders at the top-left of the
+		// canvas instead of where it was placed.
+		if (data != null)
+		{
+			data = data.replace("\r", "").replace("\n", "");
+		}
+
 		ZPLCmdList result = new ZPLCmdList(uuid);
 
 		String command = "";

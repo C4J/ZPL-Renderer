@@ -18,6 +18,7 @@ public class ZPLCommon
 	
 	public static File zplFolderFile = new File(".");
 	public static File pdfFolderFile = new File(".");
+	public static File pngFolderFile = new File(".");
 	
 	public static final JListRenderer renderer_list = new JListRenderer();
 	public static final JListFontRenderer renderer_fontlist = new JListFontRenderer();
@@ -120,6 +121,7 @@ public class ZPLCommon
 	public final static ImageIcon icon_license = new ImageIcon(iconPath+"/open_source_24x24.png");
 	public final static ImageIcon icon_print = new ImageIcon(iconPath+"/print_24x24.png");
 	public final static ImageIcon icon_pdf = new ImageIcon(iconPath+"/pdf_24x24.png");
+	public final static ImageIcon icon_png = new ImageIcon(iconPath+"/picture_24x24.png");
 	
 	
 	public static void init(String uuid)

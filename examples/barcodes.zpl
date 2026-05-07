@@ -73,13 +73,8 @@
 ^CF0,25
 ^B0R,5,N,35,N,1,0^FDThis is a Test Barcode^FS
 
-
-^FO400,980
-^BQN,2,3
-^FDhttps://www.commander4j.com^FS
-
-^FT600,980
-^BQN,2,3
-^FDhttps://www.commander4j.com^FS
+^FT400,1120
+^BQN,2,4,M,7
+^FDMAhttps://www.commander4j.com^FS
 
 ^XZ

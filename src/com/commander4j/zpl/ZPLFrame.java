@@ -51,23 +51,26 @@ import com.commander4j.dialog.JDialogAbout;
 import com.commander4j.dialog.JDialogLicenses;
 import com.commander4j.dialog.JDialogSettings;
 import com.commander4j.filters.JFileFilterPDF;
+import com.commander4j.filters.JFileFilterPNG;
 import com.commander4j.filters.JFileFilterZPL;
 import com.commander4j.gui.JButton4j;
 import com.commander4j.gui.JLabel4j_std;
 import com.commander4j.gui.JToggleButton4j;
 import com.commander4j.network.ZPLDataCallback;
+import com.commander4j.network.ZPLRestServer;
 import com.commander4j.network.ZPLSocketListener;
 import com.commander4j.settings.SettingUtil;
 import com.commander4j.settings.Settings;
 import com.commander4j.util.JHelp;
 import com.commander4j.util.JPanelToPDFVector;
+import com.commander4j.util.JPanelToPNG;
 import com.commander4j.util.VectorPdfExactSize;
 import com.commander4j.util.ZPLUtility;
 
 public class ZPLFrame extends JFrame
 {
 	private static final long serialVersionUID = 1L;
-	public static final String version = "2.01";
+	public static final String version = "2.20";
 
 	private JPanel outpanel = new JPanel();
 
@@ -91,8 +94,12 @@ public class ZPLFrame extends JFrame
 	private JComboBox<Integer> printerDPI;
 
 	private JTextField fld_Port;
+	private JTextField fld_RestPort;
 	private JTextField fld_Magnification;
 	private JTextField fld_Pages;
+
+	private JToggleButton4j btnStartRest;
+	private ZPLRestServer restServer;
 
 	private JSpinner spn_Width;
 	private JSpinner spn_Height;
@@ -132,6 +139,7 @@ public class ZPLFrame extends JFrame
 		btnOpenFile = new JButton4j(ZPLCommon.icon_open);
 		ipAddress = new JComboBox<String>();
 		fld_Port = new JTextField();
+		fld_RestPort = new JTextField();
 		fld_Magnification = new JTextField();
 		fld_Pages = new JTextField();
 		sizeUOM = new JComboBox<String>();
@@ -240,6 +248,55 @@ public class ZPLFrame extends JFrame
 		fld_Port.setPreferredSize(new Dimension(50, 24));
 
 		toolBarTop.add(fld_Port);
+
+		toolBarTop.addSeparator(separator);
+
+		JLabel4j_std lbl_Rest = new JLabel4j_std();
+		lbl_Rest.setText("REST : ");
+		toolBarTop.add(lbl_Rest);
+
+		btnStartRest = new JToggleButton4j(ZPLCommon.icon_disconnected);
+		btnStartRest.setSelected(false);
+		btnStartRest.setPreferredSize(new Dimension(32, 32));
+		btnStartRest.setToolTipText("REST Server ON/OFF");
+		btnStartRest.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if (btnStartRest.isSelected())
+				{
+					if (startRest())
+					{
+						btnStartRest.setIcon(ZPLCommon.icon_connected);
+						fld_RestPort.setEnabled(false);
+					}
+					else
+					{
+						btnStartRest.setSelected(false);
+					}
+				}
+				else
+				{
+					stopRest();
+					btnStartRest.setIcon(ZPLCommon.icon_disconnected);
+					fld_RestPort.setEnabled(true);
+				}
+			}
+		});
+		toolBarTop.add(btnStartRest);
+		toolBarTop.addSeparator(separator);
+
+		JLabel4j_std lbl_RestPort = new JLabel4j_std();
+		lbl_RestPort.setText(" Port : ");
+		toolBarTop.add(lbl_RestPort);
+
+		fld_RestPort.setText("8080");
+		numericInput(fld_RestPort);
+		fld_RestPort.setHorizontalAlignment(JTextField.CENTER);
+		fld_RestPort.setSize(new Dimension(50, 24));
+		fld_RestPort.setMinimumSize(new Dimension(50, 24));
+		fld_RestPort.setPreferredSize(new Dimension(50, 24));
+		toolBarTop.add(fld_RestPort);
 
 		toolBarTop.addSeparator(separator);
 
@@ -497,6 +554,32 @@ public class ZPLFrame extends JFrame
 			}
 		});
 
+		JButton4j btnPNG = new JButton4j(ZPLCommon.icon_png);
+		btnPNG.setToolTipText("Save as PNG");
+		toolBarSide.add(btnPNG);
+		btnPNG.setPreferredSize(new Dimension(32, 32));
+		btnPNG.setFocusable(false);
+		btnPNG.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				File savePNG = selectPNGFile();
+				if (savePNG != null)
+				{
+					try
+					{
+						int pageCount = JPanelToPNG.savePanelAsPNG(outpanel, savePNG);
+						JOptionPane.showMessageDialog(ZPLFrame.this, "Saved " + pageCount + (pageCount == 1 ? " page" : " pages") + " to PNG.", "Save as PNG", JOptionPane.INFORMATION_MESSAGE, ZPLCommon.icon_confirm);
+					}
+					catch (Exception e1)
+					{
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(ZPLFrame.this, "Failed to save PNG: " + e1.getMessage(), "Save as PNG", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
+
 		JButton4j btnAbout = new JButton4j(ZPLCommon.icon_about);
 		btnAbout.setToolTipText("About");
 		btnAbout.addActionListener(new ActionListener()
@@ -551,7 +634,7 @@ public class ZPLFrame extends JFrame
 			}
 		});
 
-		setSize(970, 920); // smaller viewport to allow scrolling
+		setSize(1180, 920); // smaller viewport to allow scrolling
 		setLocationRelativeTo(null);
 
 		int widthadjustment = util.getOSWidthAdjustment();
@@ -575,6 +658,51 @@ public class ZPLFrame extends JFrame
 		socketThread = new Thread(listenerThread, "ZPL-Listener");
 		socketThread.setDaemon(true);
 		socketThread.start();
+	}
+
+	private boolean startRest()
+	{
+		try
+		{
+			int port = Integer.parseInt(fld_RestPort.getText().trim());
+			String ip = ipAddress.getSelectedItem().toString();
+			restServer = new ZPLRestServer(ip, port, this::currentRestDefaults);
+			restServer.start();
+			return true;
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+			JOptionPane.showMessageDialog(ZPLFrame.this, "Failed to start REST server: " + ex.getMessage(), "REST", JOptionPane.ERROR_MESSAGE);
+			restServer = null;
+			return false;
+		}
+	}
+
+	private void stopRest()
+	{
+		if (restServer != null)
+		{
+			restServer.stop();
+			restServer = null;
+		}
+	}
+
+	/**
+	 * Snapshot the current GUI label/printer settings for use as REST defaults.
+	 * Called from REST worker threads — Swing widgets aren't strictly thread-safe,
+	 * but reading getText/getValue/getSelectedItem here is acceptable because the
+	 * GUI is unlikely to be writing them simultaneously and we can tolerate a
+	 * stale read between two user changes.
+	 */
+	private ZPLRestServer.Defaults currentRestDefaults()
+	{
+		int dpi = (int) printerDPI.getSelectedItem();
+		double width = Double.parseDouble(spn_Width.getValue().toString());
+		double height = Double.parseDouble(spn_Height.getValue().toString());
+		String uom = sizeUOM.getSelectedItem().toString();
+		float mag = 1.0f; // REST renders at full printer-dot resolution by default
+		return new ZPLRestServer.Defaults(dpi, width, height, uom, mag);
 	}
 
 	private void stopSocket()
@@ -601,6 +729,7 @@ public class ZPLFrame extends JFrame
 		if (question == 0)
 		{
 			stopSocket();
+			stopRest();
 			System.exit(0);
 		}
 	}
@@ -944,6 +1073,32 @@ public class ZPLFrame extends JFrame
 		}
 
 		return result;
+	}
+
+	private File selectPNGFile()
+	{
+		JFileChooser fc = new JFileChooser(ZPLCommon.pngFolderFile);
+		fc.setSelectedFile(ZPLCommon.pngFolderFile);
+
+		JFileFilterPNG ffi = new JFileFilterPNG();
+		fc.setApproveButtonText("Save");
+		fc.addChoosableFileFilter(ffi);
+		fc.setFileFilter(ffi);
+		fc.setMultiSelectionEnabled(false);
+
+		int returnVal = fc.showSaveDialog(ZPLFrame.this);
+
+		if (returnVal == JFileChooser.APPROVE_OPTION)
+		{
+			File chosen = fc.getSelectedFile();
+			if (chosen != null && chosen.getParentFile() != null)
+			{
+				ZPLCommon.pngFolderFile = chosen.getParentFile();
+			}
+			return chosen;
+		}
+
+		return null;
 	}
 
 	private void numericInput(JTextField numberField)

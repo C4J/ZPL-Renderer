@@ -60,7 +60,7 @@ public class ZPLBarcode_EAN8
 
 		if (memory.bps.recallAsStringWithDefault("^B8",ZPLPropertyStore.Param_Barcode_Interpretation,"N").equals("Y"))
 		{
-			ZPLFontCache ch = memory.zplFont.recallFont(g2d, new ZPLCmd(""), memory, magnification,true);
+			ZPLFontCache ch = memory.zplFont.recallFont(g2d, new ZPLCmd(""), memory, 1.0f, true);
 	
 			bean.setFont(ch.font);
 							
