@@ -1,54 +1,168 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <info>
-    
+
     <libraries>
-            	
+
         <library>
-            <description>Okapi Barcode</description>
-            <version>0.5.2</version>
-            <type>Apache Licence 2.0</type>> 
-         </library>
+            <description>Apache Commons Logging</description>
+            <version>1.3.6</version>
+            <type>Apache License 2.0</type>
+        </library>
+
+        <library>
+            <description>Apache PDFBox</description>
+            <version>3.0.7</version>
+            <type>Apache License 2.0</type>
+        </library>
 
         <library>
             <description>JCommander</description>
-            <version>2.0</version>
-        	<type>Apache Licence 2.0</type>
+            <version>3.0</version>
+            <type>Apache License 2.0</type>
         </library>
-        
-         <library>
-            <description>Commons Logging</description>
-            <version>1.3.5</version>
-        	<type>Apache Licence 2.0</type>
-        </library>
-        
-         <library>
-            <description>Graphics 2D</description>
-            <version>3.0.3</version>
-        	<type>Apache Licence 2.0</type>
-        </library>
-        
+
         <library>
-            <description>Apache PDFBox</description>
-            <version>3.0.5</version>
-        	<type>Apache Licence 2.0</type>
+            <description>Okapi Barcode</description>
+            <version>0.5.5</version>
+            <type>Apache License 2.0</type>
         </library>
-                                        
+
+        <library>
+            <description>PDFBox Graphics2D</description>
+            <version>3.0.5</version>
+            <type>Apache License 2.0</type>
+        </library>
+
     </libraries>
 
     <licenses>
-    
-    	<license>
-    		<type>GNU General Public License V2</type>
-    		<filename>GNU General Public License V2.txt</filename>
-    	</license>
-    
+
         <license>
-            <type>Apache Licence 2.0</type>
+            <type>Adobe</type>
+            <filename>Adobe.txt</filename>
+        </license>
+
+        <license>
+            <type>ANTLR License</type>
+            <filename>ANTLR License.txt</filename>
+        </license>
+
+        <license>
+            <type>ANTLR 4 License</type>
+            <filename>ANTLR 4 License.txt</filename>
+        </license>
+
+        <license>
+            <type>Apache License 2.0</type>
             <filename>Apache Licence Version 2.0.txt</filename>
         </license>
 
-                
+        <license>
+            <type>Barbeque License</type>
+            <filename>Barbeque License.txt</filename>
+        </license>
+
+        <license>
+            <type>2-Clause BSD License</type>
+            <filename>2-Clause BSD License.txt</filename>
+        </license>
+
+        <license>
+            <type>3-Clause BSD License</type>
+            <filename>3-Clause BSD License.txt</filename>
+        </license>
+
+        <license>
+            <type>CDDL V1</type>
+            <filename>CDDL V1.txt</filename>
+        </license>
+
+        <license>
+            <type>Common Public License v1.0</type>
+            <filename>Common Public License v1.0.txt</filename>
+        </license>
+
+        <license>
+            <type>Eclipse Distribution License 1.0</type>
+            <filename>Eclipse Distribution License - v1.txt</filename>
+        </license>
+
+        <license>
+            <type>Eclipse Public License 1.0</type>
+            <filename>Eclipse Public License 1.0.txt</filename>
+        </license>
+
+        <license>
+            <type>Eclipse Public License 2.0</type>
+            <filename>Eclipse Public License v2.0.txt</filename>
+        </license>
+
+        <license>
+            <type>GNU General Public License V2</type>
+            <filename>GNU General Public License V2.txt</filename>
+        </license>
+
+        <license>
+            <type>GNU Lesser General Public License</type>
+            <filename>GNU Lesser General Public License.txt</filename>
+        </license>
+
+        <license>
+            <type>GNU Lesser General Public License V2.1</type>
+            <filename>GNU Lesser General Public License V2.1.txt</filename>
+        </license>
+
+        <license>
+            <type>GNU Lesser General Public License V3</type>
+            <filename>GNU Lesser General Public License V3.txt</filename>
+        </license>
+
+        <license>
+            <type>ICU4J License</type>
+            <filename>ICU4J license.txt</filename>
+        </license>
+
+        <license>
+            <type>Jasper Reports License</type>
+            <filename>TIB_js-jrlib-ce_6.18.1_license.txt</filename>
+        </license>
+
+        <license>
+            <type>JDOM</type>
+            <filename>JDOM.txt</filename>
+        </license>
+
+        <license>
+            <type>Microsoft JDBC License</type>
+            <filename>Microsoft JDBC License.txt</filename>
+        </license>
+
+        <license>
+            <type>MIT License</type>
+            <filename>MIT Licence.txt</filename>
+        </license>
+
+        <license>
+            <type>Mozilla Public License 1.1</type>
+            <filename>Mozilla Public License 1.1.txt</filename>
+        </license>
+
+        <license>
+            <type>Mozilla Public License V2.0</type>
+            <filename>Mozilla Public License 2.0.txt</filename>
+        </license>
+
+        <license>
+            <type>mySQL JDBC License</type>
+            <filename>mySQL JDBC License.txt</filename>
+        </license>
+
+        <license>
+            <type>Oracle JDBC License</type>
+            <filename>Oracle JDBC License.txt</filename>
+        </license>
+
     </licenses>
 
 </info>
