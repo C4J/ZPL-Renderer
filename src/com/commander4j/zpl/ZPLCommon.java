@@ -14,7 +14,7 @@ import com.commander4j.list.JListFontRenderer;
 
 public class ZPLCommon
 {
-	public static String helpURL = "http://wiki.commander4j.com";
+	public static String helpURL = "https://wiki.commander4j.com/index.php?title=ZPLRenderer";
 	
 	public static File zplFolderFile = new File(".");
 	public static File pdfFolderFile = new File(".");

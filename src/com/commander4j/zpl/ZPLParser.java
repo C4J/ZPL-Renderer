@@ -29,7 +29,7 @@ public class ZPLParser
 
 			try
 			{
-				result = new String(Files.readAllBytes(file.toPath()));
+				result = new String(Files.readAllBytes(file.toPath()), java.nio.charset.StandardCharsets.ISO_8859_1);
 			}
 			catch (IOException e)
 			{

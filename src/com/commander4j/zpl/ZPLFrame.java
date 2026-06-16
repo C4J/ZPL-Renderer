@@ -46,9 +46,11 @@ import javax.swing.text.Document;
 import javax.swing.text.DocumentFilter;
 
 import com.commander4j.cmd.ZPLCmd;
+import com.commander4j.cmd.ZPLCmdInfo;
 import com.commander4j.cmd.ZPLCmdList;
 import com.commander4j.dialog.JDialogAbout;
 import com.commander4j.dialog.JDialogLicenses;
+import com.commander4j.dialog.JDialogEditZPL;
 import com.commander4j.dialog.JDialogSettings;
 import com.commander4j.filters.JFileFilterPDF;
 import com.commander4j.filters.JFileFilterPNG;
@@ -70,7 +72,7 @@ import com.commander4j.util.ZPLUtility;
 public class ZPLFrame extends JFrame
 {
 	private static final long serialVersionUID = 1L;
-	public static final String version = "2.20";
+	public static final String version = "2.21";
 
 	private JPanel outpanel = new JPanel();
 
@@ -86,6 +88,15 @@ public class ZPLFrame extends JFrame
 	private int pageCount = 0;
 
 	private String currentfilename;
+
+	// Raw ZPL for the labels currently held, one entry per ^XA…^XZ page, in the
+	// order received/loaded. Populated from file or socket input, capped to the
+	// Max Pages setting, and used by the editor and "Save ZPL".
+	private LinkedList<String> zplPages = new LinkedList<String>();
+
+	// Remembers the file used by the last "Save ZPL" so subsequent saves of
+	// socket-received ZPL default to the same name. Cleared by clear().
+	private String lastSavedZPLFile = "";
 
 	private JScrollPane scrollPane;
 
@@ -455,7 +466,20 @@ public class ZPLFrame extends JFrame
 		{
 			public void actionPerformed(ActionEvent e)
 			{
+				editZPL();
+			}
+		});
 
+		JButton4j btnSaveZPL = new JButton4j(ZPLCommon.icon_save);
+		btnSaveZPL.setToolTipText("Save ZPL");
+		toolBarSide.add(btnSaveZPL);
+		btnSaveZPL.setPreferredSize(new Dimension(32, 32));
+		btnSaveZPL.setFocusable(false);
+		btnSaveZPL.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				saveZPL();
 			}
 		});
 
@@ -653,7 +677,20 @@ public class ZPLFrame extends JFrame
 
 	private void startSocket()
 	{
-		callback_zpldata = zplBlock -> javax.swing.SwingUtilities.invokeLater(() -> processZPL(zplBlock, uuid));
+		callback_zpldata = zplBlock -> javax.swing.SwingUtilities.invokeLater(() -> {
+			// ZPL arrived over the socket: it is no longer associated with a
+			// loaded file, so a subsequent "Save ZPL" defaults to the configured
+			// save folder rather than any previously opened file.
+			currentfilename = "";
+			setAppTitle("");
+
+			// Each received ^XA…^XZ block is one page. Append, cap to Max Pages,
+			// then re-render so the view always matches the page collection.
+			zplPages.add(zplBlock);
+			trimPagesToMax();
+
+			renderPages();
+		});
 		listenerThread = new ZPLSocketListener(Integer.valueOf(fld_Port.getText()), callback_zpldata, ipAddress.getSelectedItem().toString());
 		socketThread = new Thread(listenerThread, "ZPL-Listener");
 		socketThread.setDaemon(true);
@@ -745,6 +782,8 @@ public class ZPLFrame extends JFrame
 	private void clear()
 	{
 		currentfilename = "";
+		zplPages.clear();
+		lastSavedZPLFile = "";
 		outpanel.removeAll();
 		outpanel.revalidate();
 		outpanel.repaint();
@@ -807,6 +846,344 @@ public class ZPLFrame extends JFrame
 		}
 	}
 
+	/**
+	 * Split a ZPL string into its individual {@code ^XA…^XZ} pages (one per
+	 * label). Mirrors the block extraction used by the socket listener, so file
+	 * and socket input are paged the same way. Anything outside a complete
+	 * {@code ^XA…^XZ} pair is ignored.
+	 */
+	private LinkedList<String> splitIntoPages(String zpl)
+	{
+		LinkedList<String> pages = new LinkedList<String>();
+
+		if (zpl != null)
+		{
+			int from = 0;
+
+			while (true)
+			{
+				int start = zpl.indexOf("^XA", from);
+				if (start < 0)
+				{
+					break;
+				}
+
+				int end = zpl.indexOf("^XZ", start + 3);
+				if (end < 0)
+				{
+					break;
+				}
+
+				int endInclusive = end + 3;
+				pages.add(zpl.substring(start, endInclusive));
+				from = endInclusive;
+			}
+		}
+
+		return pages;
+	}
+
+	/**
+	 * Does this page contain a command that actually prints something? Used so
+	 * the Max Pages cap counts real labels and ignores control/config blocks
+	 * (e.g. a printer driver's {@code ^XA^JUS^XZ}). Side-effect free: the shared
+	 * parser delimiter is saved and restored around the throwaway parse.
+	 */
+	private boolean pagePrints(String page)
+	{
+		String savedDelimiter = ZPLCommon.config.get(uuid).state.delimiter;
+
+		try
+		{
+			ZPLParser parser = new ZPLParser(uuid);
+			LinkedList<ZPLCmd> cmds = parser.parseBytes(page).getCommands();
+
+			for (ZPLCmd c : cmds)
+			{
+				ZPLCmdInfo info = ZPLCommon.config.get(uuid).zplindex.zplDescription.get(c.getCommand());
+				if (info != null && info.prints)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+		finally
+		{
+			ZPLCommon.config.get(uuid).state.delimiter = savedDelimiter;
+		}
+	}
+
+	/**
+	 * Classify a page for display in the editor's page picker:
+	 * <ul>
+	 * <li>"Visible" – contains a printing command, so it renders a label;</li>
+	 * <li>"Blank/control" – renders nothing but carries control commands
+	 * (e.g. {@code ^LT}, {@code ^PW});</li>
+	 * <li>"Blank" – an empty {@code ^XA^XZ} with no other commands.</li>
+	 * </ul>
+	 * Side-effect free: the shared parser delimiter is saved and restored.
+	 */
+	private String pageCategory(String page)
+	{
+		String savedDelimiter = ZPLCommon.config.get(uuid).state.delimiter;
+
+		try
+		{
+			ZPLParser parser = new ZPLParser(uuid);
+			LinkedList<ZPLCmd> cmds = parser.parseBytes(page).getCommands();
+
+			boolean hasControl = false;
+
+			for (ZPLCmd c : cmds)
+			{
+				String cmd = c.getCommand();
+
+				ZPLCmdInfo info = ZPLCommon.config.get(uuid).zplindex.zplDescription.get(cmd);
+				if (info != null && info.prints)
+				{
+					return "Visible";
+				}
+
+				if (!cmd.equals("^XA") && !cmd.equals("^XZ"))
+				{
+					hasControl = true;
+				}
+			}
+
+			return hasControl ? "Blank/control" : "Blank";
+		}
+		finally
+		{
+			ZPLCommon.config.get(uuid).state.delimiter = savedDelimiter;
+		}
+	}
+
+	/**
+	 * Cap the page collection to the Max Pages setting. Only printing labels
+	 * count toward the cap, so non-printing control/config blocks never push a
+	 * real label off the list. The oldest pages are discarded first.
+	 */
+	private void trimPagesToMax()
+	{
+		int maxLabels;
+
+		try
+		{
+			maxLabels = Integer.valueOf(settings.maxPages);
+		}
+		catch (NumberFormatException e)
+		{
+			maxLabels = 10;
+		}
+
+		if (maxLabels < 1)
+		{
+			maxLabels = 1;
+		}
+
+		int printing = 0;
+		for (String pg : zplPages)
+		{
+			if (pagePrints(pg))
+			{
+				printing++;
+			}
+		}
+
+		while (printing > maxLabels && !zplPages.isEmpty())
+		{
+			String removed = zplPages.removeFirst();
+			if (pagePrints(removed))
+			{
+				printing--;
+			}
+		}
+	}
+
+	/**
+	 * Clear the viewer and re-render every page in {@link #zplPages}, one page at
+	 * a time. Rendering per page (rather than parsing all pages in a single pass)
+	 * matches the proven socket path and avoids the shared-state issues that a
+	 * combined multi-label parse would hit.
+	 */
+	private void renderPages()
+	{
+		pageNo = 1;
+
+		ZPLCommon.config.get(uuid).zplFont.zplFontCache.clear();
+
+		resetPages();
+
+		for (String page : zplPages)
+		{
+			processZPL(page, uuid);
+		}
+
+		scrollPane.revalidate();
+		scrollPane.repaint();
+	}
+
+	/**
+	 * Open the modal ZPL editor. When more than one page is held the user is
+	 * first prompted for which page to edit. Accepting the edit replaces that
+	 * page and re-renders the whole set.
+	 */
+	private void editZPL()
+	{
+		if (zplPages.isEmpty())
+		{
+			JOptionPane.showMessageDialog(ZPLFrame.this, "There is no ZPL to edit.", "Edit ZPL", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+
+		int pageIndex = 0;
+
+		if (zplPages.size() > 1)
+		{
+			// Annotate each page with its category so the user can tell the
+			// real labels from the driver's blank/control blocks.
+			String[] choices = new String[zplPages.size()];
+			String initial = null;
+
+			for (int i = 0; i < choices.length; i++)
+			{
+				String category = pageCategory(zplPages.get(i));
+				choices[i] = "Page " + (i + 1) + " — " + category;
+
+				// Default the picker to the first visible label.
+				if (initial == null && category.equals("Visible"))
+				{
+					initial = choices[i];
+				}
+			}
+
+			if (initial == null)
+			{
+				initial = choices[0];
+			}
+
+			Object selected = JOptionPane.showInputDialog(ZPLFrame.this, "Select the page to edit:", "Edit ZPL", JOptionPane.QUESTION_MESSAGE, ZPLCommon.icon_edit, choices, initial);
+
+			if (selected == null)
+			{
+				// User cancelled the page selection.
+				return;
+			}
+
+			pageIndex = java.util.Arrays.asList(choices).indexOf(selected);
+
+			if (pageIndex < 0)
+			{
+				pageIndex = 0;
+			}
+		}
+
+		JDialogEditZPL editor = new JDialogEditZPL(ZPLFrame.this, zplPages.get(pageIndex));
+		editor.setVisible(true);
+
+		if (editor.isAccepted())
+		{
+			zplPages.set(pageIndex, editor.getZPLText());
+			renderPages();
+		}
+	}
+
+	private File selectSaveZPLFile()
+	{
+		File result = null;
+
+		// Decide what to pre-select:
+		// - ZPL loaded from disk -> default to that same folder/filename.
+		// - ZPL received via socket -> default to the last saved file if one
+		//   exists, otherwise the configured save folder with no filename.
+		File suggested = null;
+
+		if (currentfilename != null && !currentfilename.isEmpty())
+		{
+			suggested = new File(currentfilename);
+		}
+		else if (lastSavedZPLFile != null && !lastSavedZPLFile.isEmpty())
+		{
+			suggested = new File(lastSavedZPLFile);
+		}
+
+		JFileChooser fc;
+
+		if (suggested != null && suggested.getParentFile() != null)
+		{
+			fc = new JFileChooser(suggested.getParentFile());
+			fc.setSelectedFile(suggested);
+		}
+		else
+		{
+			fc = new JFileChooser(resolveSaveFolder());
+		}
+
+		JFileFilterZPL ffi = new JFileFilterZPL();
+		fc.setApproveButtonText("Save");
+		fc.addChoosableFileFilter(ffi);
+		fc.setFileFilter(ffi);
+		fc.setMultiSelectionEnabled(false);
+
+		int returnVal = fc.showSaveDialog(ZPLFrame.this);
+
+		if (returnVal == JFileChooser.APPROVE_OPTION)
+		{
+			result = fc.getSelectedFile();
+
+			// Append .zpl if the user did not supply the extension.
+			if (result != null && !result.getName().toLowerCase().endsWith(".zpl"))
+			{
+				result = new File(result.getAbsolutePath() + ".zpl");
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * Save every held page to a single file chosen by the user, one label after
+	 * another.
+	 */
+	private void saveZPL()
+	{
+		if (zplPages.isEmpty())
+		{
+			JOptionPane.showMessageDialog(ZPLFrame.this, "There is no ZPL to save.", "Save ZPL", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+
+		File saveFile = selectSaveZPLFile();
+
+		if (saveFile != null)
+		{
+			try
+			{
+				StringBuilder sb = new StringBuilder();
+				for (String page : zplPages)
+				{
+					sb.append(page);
+					sb.append("\n");
+				}
+
+				java.nio.file.Files.write(saveFile.toPath(), sb.toString().getBytes(java.nio.charset.StandardCharsets.ISO_8859_1));
+
+				// Remember for subsequent saves (used when ZPL arrived via socket).
+				lastSavedZPLFile = saveFile.getAbsolutePath();
+
+				int count = zplPages.size();
+				JOptionPane.showMessageDialog(ZPLFrame.this, "Saved " + count + (count == 1 ? " label" : " labels") + " to " + saveFile.getName() + ".", "Save ZPL", JOptionPane.INFORMATION_MESSAGE, ZPLCommon.icon_confirm);
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+				JOptionPane.showMessageDialog(ZPLFrame.this, "Failed to save ZPL: " + ex.getMessage(), "Save ZPL", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
 	private void setAppTitle(String filename)
 	{
 		if (filename.equals(""))
@@ -821,39 +1198,21 @@ public class ZPLFrame extends JFrame
 
 	private void fileZPLassignToPanels(String filename, String uuid)
 	{
-		// All of the commands in the entire file.
+		// All of the commands in the entire file, split into individual pages.
 
 		currentfilename = filename;
 
-		pageNo = 1;
-
-		ZPLCommon.config.get(uuid).zplFont.zplFontCache.clear();
-
 		setAppTitle(currentfilename);
-
-		resetPages();
 
 		ZPLParser zplparse = new ZPLParser(this.uuid);
 
 		String zpl = zplparse.readFromFile(currentfilename);
 
-		processZPL(zpl, uuid);
+		zplPages = splitIntoPages(zpl);
+		trimPagesToMax();
 
-	}
+		renderPages();
 
-	public void socketZPLassignToPanels(String zpl, String uuid)
-	{
-		// All of the commands in the entire file.
-
-		currentfilename = "";
-
-		pageNo = 1;
-
-		setAppTitle("");
-
-		resetPages();
-
-		processZPL(zpl, uuid);
 	}
 
 	private void resetPages()
@@ -958,6 +1317,7 @@ public class ZPLFrame extends JFrame
 			}
 
 		}
+
 		scrollPane.revalidate();
 		scrollPane.repaint();
 
@@ -1048,12 +1408,39 @@ public class ZPLFrame extends JFrame
 		scrollPane.repaint();
 	}
 
+	/**
+	 * Determine the folder in which save dialogs should open, honouring the
+	 * "Save to home" checkbox in config.xml. When enabled the user's home
+	 * directory is used; otherwise the configured alternate save location is
+	 * used. Falls back to the home directory if the configured location is
+	 * missing or invalid.
+	 */
+	private File resolveSaveFolder()
+	{
+		File folder = null;
+
+		if (Boolean.valueOf(settings.saveToHome))
+		{
+			folder = new File(System.getProperty("user.home"));
+		}
+		else
+		{
+			folder = util.stringToPath(settings.alternateSaveLocation);
+		}
+
+		if (folder == null || !folder.exists())
+		{
+			folder = new File(System.getProperty("user.home"));
+		}
+
+		return folder;
+	}
+
 	private File selectPDFFile()
 	{
 		File result = null;
 
-		JFileChooser fc = new JFileChooser(ZPLCommon.pdfFolderFile);
-		fc.setSelectedFile(ZPLCommon.pdfFolderFile);
+		JFileChooser fc = new JFileChooser(resolveSaveFolder());
 
 		JFileFilterPDF ffi = new JFileFilterPDF();
 		fc.setApproveButtonText("Save");
@@ -1061,11 +1448,17 @@ public class ZPLFrame extends JFrame
 		fc.setFileFilter(ffi);
 		fc.setMultiSelectionEnabled(false);
 
-		int returnVal = fc.showOpenDialog(ZPLFrame.this);
+		int returnVal = fc.showSaveDialog(ZPLFrame.this);
 
 		if (returnVal == JFileChooser.APPROVE_OPTION)
 		{
 			result = fc.getSelectedFile();
+
+			// Append .pdf if the user did not supply the extension.
+			if (result != null && !result.getName().toLowerCase().endsWith(".pdf"))
+			{
+				result = new File(result.getAbsolutePath() + ".pdf");
+			}
 		}
 		else
 		{
@@ -1077,8 +1470,7 @@ public class ZPLFrame extends JFrame
 
 	private File selectPNGFile()
 	{
-		JFileChooser fc = new JFileChooser(ZPLCommon.pngFolderFile);
-		fc.setSelectedFile(ZPLCommon.pngFolderFile);
+		JFileChooser fc = new JFileChooser(resolveSaveFolder());
 
 		JFileFilterPNG ffi = new JFileFilterPNG();
 		fc.setApproveButtonText("Save");
@@ -1090,12 +1482,7 @@ public class ZPLFrame extends JFrame
 
 		if (returnVal == JFileChooser.APPROVE_OPTION)
 		{
-			File chosen = fc.getSelectedFile();
-			if (chosen != null && chosen.getParentFile() != null)
-			{
-				ZPLCommon.pngFolderFile = chosen.getParentFile();
-			}
-			return chosen;
+			return fc.getSelectedFile();
 		}
 
 		return null;
