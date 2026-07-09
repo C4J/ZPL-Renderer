@@ -11,7 +11,7 @@ import com.commander4j.zpl.ZPLFrame;
 public class JLicenseInfo implements Comparable<JLicenseInfo>
 {
 	public static int width_description = 30;
-	public static int width_version = 12;
+	public static int width_version = 17;
 	public static int width_type = 15;
 	public String description;
 	public String licenceFilename;

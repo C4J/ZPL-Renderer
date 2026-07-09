@@ -48,14 +48,14 @@ public class JDialogLicenses extends JDialog
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		util.setLookAndFeel("Nimbus");
 		setTitle("Libraries");
-		setBounds(100, 100, 540, 350);
+		setBounds(100, 100, 575, 350);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(0, 24, 521, 246);
+		scrollPane.setBounds(0, 24, 556, 246);
 		contentPanel.add(scrollPane);
 		
 		populateList();
@@ -86,7 +86,7 @@ public class JDialogLicenses extends JDialog
 		scrollPane.setViewportView(list);
 
 		JPanel buttonPane = new JPanel();
-		buttonPane.setBounds(0, 271, 521, 39);
+		buttonPane.setBounds(0, 271, 556, 39);
 		contentPanel.add(buttonPane);
 		buttonPane.setLayout(null);
 		{
@@ -99,7 +99,7 @@ public class JDialogLicenses extends JDialog
 					dispose();
 				}
 			});
-			okButton.setBounds(200, 0, 128, 32);
+			okButton.setBounds(218, 0, 128, 32);
 			okButton.setActionCommand("OK");
 			buttonPane.add(okButton);
 			getRootPane().setDefaultButton(okButton);
