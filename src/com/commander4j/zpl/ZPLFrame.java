@@ -72,7 +72,7 @@ import com.commander4j.util.ZPLUtility;
 public class ZPLFrame extends JFrame
 {
 	private static final long serialVersionUID = 1L;
-	public static final String version = "2.21";
+	public static final String version = "2.22";
 
 	private JPanel outpanel = new JPanel();
 
